@@ -12,15 +12,15 @@ package main
 # Rego dialect: expects Conftest aligned with Rego v1 (e.g. >= 0.50).
 # `.github/workflows/iac-policy-check.yml` installs a matching release.
 
-is_missing(value) if {
+is_missing(value) {
     value == null
 }
 
-is_missing(value) if {
+is_missing(value) {
     value == ""
 }
 
-deny contains msg if {
+deny[msg] {
     resource := input.resource_changes[_]
     resource.type == "null_resource"
     public_access := object.get(resource.change.after.triggers, "public_access", "")
@@ -28,7 +28,7 @@ deny contains msg if {
     msg := "public access is not allowed"
 }
 
-deny contains msg if {
+deny[msg] {
     resource := input.resource_changes[_]
     resource.type == "null_resource"
     encryption_enabled := object.get(resource.change.after.triggers, "encryption_enabled", "")
@@ -36,7 +36,7 @@ deny contains msg if {
     msg := "encryption must be enabled"
 }
 
-deny contains msg if {
+deny[msg] {
     resource := input.resource_changes[_]
     resource.type == "null_resource"
     owner := object.get(resource.change.after.triggers, "owner", "")
@@ -44,7 +44,7 @@ deny contains msg if {
     msg := "owner tag is required"
 }
 
-deny contains msg if {
+deny[msg] {
     resource := input.resource_changes[_]
     resource.type == "null_resource"
     environment := object.get(resource.change.after.triggers, "environment", "")
@@ -53,12 +53,12 @@ deny contains msg if {
 }
 
 # AWS S3 (terraform plan fixtures / real aws_s3_bucket plans)
-has_s3_sse(after) if {
+has_s3_sse(after) {
     sse := object.get(after, "server_side_encryption_configuration", null)
     sse != null
 }
 
-deny contains msg if {
+deny[msg] {
     resource := input.resource_changes[_]
     resource.type == "aws_s3_bucket"
     acl := object.get(resource.change.after, "acl", "private")
@@ -66,14 +66,14 @@ deny contains msg if {
     msg := "public access is not allowed"
 }
 
-deny contains msg if {
+deny[msg] {
     resource := input.resource_changes[_]
     resource.type == "aws_s3_bucket"
     not has_s3_sse(resource.change.after)
     msg := "encryption must be enabled"
 }
 
-deny contains msg if {
+deny[msg] {
     resource := input.resource_changes[_]
     resource.type == "aws_s3_bucket"
     tags := object.get(resource.change.after, "tags", {})
@@ -82,7 +82,7 @@ deny contains msg if {
     msg := "owner tag is required"
 }
 
-deny contains msg if {
+deny[msg] {
     resource := input.resource_changes[_]
     resource.type == "aws_s3_bucket"
     tags := object.get(resource.change.after, "tags", {})
