@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-app-bad
+  # INTENTIONAL FAILURE: Missing owner label (app.kubernetes.io/owner)
+  labels:
+    app: demo-bad
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-bad
+  template:
+    metadata:
+      labels:
+        app: demo-bad
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          # INTENTIONAL FAILURE: Missing resources block
+          # INTENTIONAL FAILURE: Running as privileged
+          securityContext:
+            privileged: true

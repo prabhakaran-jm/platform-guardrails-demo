@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-app-good
+  labels:
+    app: demo-good
+    # PASS: Has the required owner label
+    app.kubernetes.io/owner: "platform-team"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-good
+  template:
+    metadata:
+      labels:
+        app: demo-good
+        app.kubernetes.io/owner: "platform-team"
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          # PASS: Non-privileged and explicitly requested limits
+          securityContext:
+            privileged: false
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"

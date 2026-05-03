@@ -1,0 +1,24 @@
+# What the guardrail does: Requires an explicit owner label for tracking/cost-attribution.
+# Where it runs: Kubernetes Admission Controller.
+# How to narrate: "Accountability shouldn't be an afterthought. Tagging is mandated at the door."
+# Why this is a guardrail: Shifts FinOps left without needing a manual audit.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-owner-label
+spec:
+  validationFailureAction: Enforce
+  background: false
+  rules:
+    - name: validate-owner-label
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      validate:
+        message: "owner label is required (app.kubernetes.io/owner)"
+        pattern:
+          metadata:
+            labels:
+              app.kubernetes.io/owner: "?*"

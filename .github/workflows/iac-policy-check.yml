@@ -1,0 +1,57 @@
+name: IaC Policy Check
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  validate-iac:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.5.0"
+          terraform_wrapper: false
+
+      - name: Install Conftest
+        run: |
+          wget https://github.com/open-policy-agent/conftest/releases/download/v0.46.0/conftest_0.46.0_Linux_x86_64.tar.gz
+          tar xzf conftest_0.46.0_Linux_x86_64.tar.gz
+          sudo mv conftest /usr/local/bin/
+
+      - name: Terraform Init & Plan (Good Example)
+        working-directory: terraform/good
+        run: |
+          terraform init
+          terraform plan -out=tfplan
+          terraform show -json tfplan > tfplan.json
+
+      - name: Run Conftest on Good Example (Should Pass)
+        working-directory: terraform/good
+        run: conftest test tfplan.json -p ../../iac-policies/terraform.rego
+
+      - name: Terraform Init & Plan (Bad Example)
+        working-directory: terraform/bad
+        run: |
+          terraform init
+          terraform plan -out=tfplan
+          terraform show -json tfplan > tfplan.json
+
+      - name: Run Conftest on Bad Example (Should Fail)
+        working-directory: terraform/bad
+        # Note: In a real CI setup, failure here aborts the pipeline.
+        # We catch it manually here just to demonstrate it works.
+        run: |
+          if conftest test tfplan.json -p ../../iac-policies/terraform.rego; then
+            echo "ERROR: Bad policy unexpectedly passed."
+            exit 1
+          else
+            echo "SUCCESS: Bad policy correctly blocked by conftest."
+            exit 0
+          fi

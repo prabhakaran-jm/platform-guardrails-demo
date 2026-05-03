@@ -1,0 +1,27 @@
+# What the guardrail does: Enforces resource limits for CPU and Memory.
+# Where it runs: Kubernetes Admission Controller.
+# How to narrate: "Noisesy neighbors can take down a node. We enforce limits automatically."
+# Why this is a guardrail: Protects system stability without human intervention.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-resource-limits
+spec:
+  validationFailureAction: Enforce
+  background: false
+  rules:
+    - name: validate-resources
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      validate:
+        message: "resource limits are required (cpu and memory)"
+        pattern:
+          spec:
+            containers:
+              - resources:
+                  limits:
+                    cpu: "?*"
+                    memory: "?*"
