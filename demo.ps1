@@ -1,6 +1,7 @@
-param (
-    [Parameter(Mandatory=$false)]
-    [string]$Command = ""
+﻿param (
+    [Parameter(Mandatory=$true)]
+    [ValidateSet("setup", "k8s-bad", "k8s-good", "iac-bad", "iac-good", "reset")]
+    [string]$Command
 )
 
 $ErrorActionPreference = "Stop"
@@ -12,24 +13,31 @@ switch ($Command) {
         & .\scripts\setup-kind.ps1
         & .\scripts\install-kyverno.ps1
         Write-Host "Setup complete." -ForegroundColor Green
+        exit $LASTEXITCODE
     }
+
     "k8s-bad" {
-        & .\scripts\run-k8s-demo.ps1 -Scenario "bad"
+        & .\scripts\run-k8s-demo.ps1 bad
+        exit $LASTEXITCODE
     }
+
     "k8s-good" {
-        & .\scripts\run-k8s-demo.ps1 -Scenario "good"
+        & .\scripts\run-k8s-demo.ps1 good
+        exit $LASTEXITCODE
     }
+
     "iac-bad" {
-        & .\scripts\run-iac-demo.ps1 -Scenario "bad"
+        & .\scripts\run-iac-demo.ps1 bad
+        exit $LASTEXITCODE
     }
+
     "iac-good" {
-        & .\scripts\run-iac-demo.ps1 -Scenario "good"
+        & .\scripts\run-iac-demo.ps1 good
+        exit $LASTEXITCODE
     }
+
     "reset" {
         & .\reset.ps1
-    }
-    default {
-        Write-Host "Usage: .\demo.ps1 {setup|k8s-bad|k8s-good|iac-bad|iac-good|reset}" -ForegroundColor Yellow
-        exit 1
+        exit $LASTEXITCODE
     }
 }
