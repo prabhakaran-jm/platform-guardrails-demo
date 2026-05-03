@@ -1,7 +1,7 @@
 # What the guardrail does: Blocks pods attempting to run as privileged.
 # Where it runs: Kubernetes Admission Controller.
-# How to narrate: "Instead of hoping developers don't run as root, we automate the boundary."
-# Why this is a guardrail: Feedback is instantaneous inside the developer's normal workflow.
+# How to narrate: "Instead of hoping developers don't run privileged containers, we automate the boundary."
+# Why this is a guardrail: Feedback is immediate inside the developer's normal workflow.
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
@@ -13,13 +13,13 @@ spec:
     - name: validate-privileged
       match:
         any:
-        - resources:
-            kinds:
-              - Pod
+          - resources:
+              kinds:
+                - Pod
       validate:
         message: "privileged containers are not allowed"
         pattern:
           spec:
             containers:
               - =(securityContext):
-                  =(privileged): "?!(true)"
+                  =(privileged): "false"
