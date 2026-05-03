@@ -27,6 +27,10 @@ if ($Scenario -eq "bad") {
     Write-Host "Kubernetes Guardrail Demo: Bad Workload" -ForegroundColor Cyan
     Write-Host "========================================" -ForegroundColor Cyan
     Write-Host "Expected result: This deployment should be blocked by Kyverno." -ForegroundColor Yellow
+    Write-Host "  Policies that should fire:" -ForegroundColor Yellow
+    Write-Host "    - disallow-privileged-containers" -ForegroundColor Yellow
+    Write-Host "    - require-resource-limits" -ForegroundColor Yellow
+    Write-Host "    - require-owner-label" -ForegroundColor Yellow
     Write-Host ""
 
     $result = Invoke-KubectlApply -ManifestPath "k8s/bad/deployment.yaml"
@@ -80,12 +84,20 @@ if ($Scenario -eq "good") {
     Write-Host $result.Output
     Write-Host ""
 
-    if ($result.ExitCode -eq 0) {
-        Write-Host "Result:" -ForegroundColor Green
-        Write-Host "The safe change passed the platform guardrails." -ForegroundColor Green
-        exit 0
+    if ($result.ExitCode -ne 0) {
+        Write-Host "ERROR: Good deployment unexpectedly failed at admission." -ForegroundColor Red
+        exit 1
     }
 
-    Write-Host "ERROR: Good deployment unexpectedly failed. Demo failed!" -ForegroundColor Red
-    exit 1
+    Write-Host "Waiting for rollout to complete..." -ForegroundColor Cyan
+    kubectl rollout status deployment/demo-app-good -n default --timeout=90s
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "ERROR: Deployment did not become ready in time." -ForegroundColor Red
+        exit 1
+    }
+
+    Write-Host ""
+    Write-Host "Result:" -ForegroundColor Green
+    Write-Host "The safe change passed the platform guardrails and is running." -ForegroundColor Green
+    exit 0
 }

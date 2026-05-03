@@ -11,6 +11,9 @@ else
   echo "Cluster already deleted."
 fi
 
+# Drop the stale kubeconfig context so reruns start clean.
+kubectl config delete-context kind-platform-guardrails-demo >/dev/null 2>&1 || true
+
 # Clean Terraform state and plans
 echo "Cleaning Terraform files..."
 find terraform -type d -name ".terraform" -exec rm -rf {} + 2>/dev/null || true

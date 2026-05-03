@@ -27,6 +27,36 @@ if ($LASTEXITCODE -ne 0) {
     exit 2
 }
 
+# Fork reachability precheck — Argo can only sync a repoURL it can clone.
+$Repo = $env:DEMO_GITOPS_REPO_URL
+if ([string]::IsNullOrWhiteSpace($Repo)) {
+    $remote = git -C $Root remote get-url origin 2>$null
+    if ($LASTEXITCODE -eq 0 -and $remote) {
+        if ($remote -match '^https://') {
+            $Repo = $remote -replace '\.git$', ''
+        } elseif ($remote -match '^git@') {
+            $stripped = $remote -replace '^git@', ''
+            $hostPart, $pathPart = $stripped -split ':', 2
+            $pathPart = $pathPart -replace '\.git$', ''
+            $Repo = "https://$hostPart/$pathPart"
+        }
+    }
+}
+if ([string]::IsNullOrWhiteSpace($Repo) -or -not ($Repo -match '^https://')) {
+    Write-Host "ERROR: GitOps demo requires a public HTTPS fork URL." -ForegroundColor Red
+    Write-Host "  Set DEMO_GITOPS_REPO_URL or push your fork as 'origin' over HTTPS." -ForegroundColor Yellow
+    Write-Host "  For the recording, prefer .\demo.ps1 k8s-bad / k8s-good (no remote needed)." -ForegroundColor Yellow
+    exit 2
+}
+$Revision = if ($env:DEMO_GITOPS_REVISION) { $env:DEMO_GITOPS_REVISION } else { "main" }
+Write-Host "Checking fork reachability: $Repo" -ForegroundColor Cyan
+git ls-remote $Repo $Revision *>$null
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "ERROR: Cannot reach $Repo@$Revision." -ForegroundColor Red
+    Write-Host "  Push your fork (with the latest manifests) before running gitops-* demos." -ForegroundColor Yellow
+    exit 2
+}
+
 function Remove-DemoApplications {
     kubectl delete applications.argoproj.io demo-gitops-good demo-gitops-bad -n argocd --ignore-not-found | Out-Null
 }

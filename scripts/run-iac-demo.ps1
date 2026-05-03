@@ -77,7 +77,7 @@ function Run-TerraformPlan {
 if ($Scenario -eq "bad") {
     Write-Section `
         -Title "IaC Guardrail Demo: Bad Infrastructure" `
-        -Expected "The Terraform plan should be blocked by Conftest."
+        -Expected "The Terraform plan should be blocked by Conftest. Denials: public access, encryption, owner tag, environment tag."
 
     $result = Run-TerraformPlan -Directory "terraform/bad"
 

@@ -11,7 +11,8 @@ for tool in "${TOOLS[@]}"; do
         echo "Please install $tool to run this demo."
         exit 1
     else
-        echo " - $tool found"
+        version=$("$tool" --version 2>&1 | head -n1)
+        echo " - $tool found ($version)"
     fi
 done
 

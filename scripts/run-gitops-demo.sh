@@ -19,6 +19,30 @@ if ! kubectl get namespace argocd &>/dev/null; then
   exit 2
 fi
 
+# Fork reachability precheck — Argo can only sync a repoURL it can clone.
+REPO="${DEMO_GITOPS_REPO_URL:-}"
+if [[ -z "$REPO" ]]; then
+  REMOTE=$(git -C "$ROOT" remote get-url origin 2>/dev/null || true)
+  if [[ "$REMOTE" =~ ^https:// ]]; then
+    REPO="${REMOTE%.git}"
+  elif [[ "$REMOTE" =~ ^git@ ]]; then
+    stripped="${REMOTE#git@}"; host="${stripped%%:*}"; path="${stripped#*:}"; path="${path%.git}"
+    REPO="https://${host}/${path}"
+  fi
+fi
+if [[ -z "$REPO" ]] || [[ ! "$REPO" =~ ^https:// ]]; then
+  echo "ERROR: GitOps demo requires a public HTTPS fork URL."
+  echo "  Set DEMO_GITOPS_REPO_URL or push your fork as 'origin' over HTTPS."
+  echo "  For the recording, prefer ./demo.sh k8s-bad / k8s-good (no remote needed)."
+  exit 2
+fi
+echo "Checking fork reachability: ${REPO}"
+if ! git ls-remote "${REPO}" "${DEMO_GITOPS_REVISION:-main}" &>/dev/null; then
+  echo "ERROR: Cannot reach ${REPO}@${DEMO_GITOPS_REVISION:-main}."
+  echo "  Push your fork (with the latest manifests) before running gitops-* demos."
+  exit 2
+fi
+
 cleanup_apps() {
   kubectl delete applications.argoproj.io demo-gitops-good demo-gitops-bad \
     -n argocd --ignore-not-found

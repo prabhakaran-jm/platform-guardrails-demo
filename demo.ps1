@@ -10,10 +10,15 @@ switch ($Command) {
     "setup" {
         Write-Host "Starting Setup..." -ForegroundColor Cyan
         & .\scripts\check-prereqs.ps1
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         & .\scripts\setup-kind.ps1
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         & .\scripts\install-kyverno.ps1
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        & .\scripts\install-argocd.ps1
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         Write-Host "Setup complete." -ForegroundColor Green
-        exit $LASTEXITCODE
+        exit 0
     }
 
     "k8s-bad" {

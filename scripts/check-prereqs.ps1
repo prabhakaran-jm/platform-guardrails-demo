@@ -8,7 +8,8 @@ foreach ($tool in $tools) {
         Write-Host "Please install $tool to run this demo." -ForegroundColor Yellow
         exit 1
     } else {
-        Write-Host " - $tool found" -ForegroundColor Green
+        $version = (& $tool --version 2>&1 | Select-Object -First 1)
+        Write-Host " - $tool found ($version)" -ForegroundColor Green
     }
 }
 

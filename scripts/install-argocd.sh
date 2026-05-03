@@ -17,7 +17,7 @@ helm upgrade --install argocd argo/argo-cd \
   --version "${ARGO_CD_CHART_VERSION}" \
   -f "${VALUES_FILE}" \
   --wait \
-  --timeout 20m
+  --timeout 5m
 
 kubectl rollout status deployment/argocd-server -n argocd --timeout=180s
 kubectl rollout status deployment/argocd-repo-server -n argocd --timeout=180s

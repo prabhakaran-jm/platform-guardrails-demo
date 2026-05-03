@@ -16,7 +16,7 @@ $ValuesFile = Join-Path $RepoRoot "gitops/argocd-demo-values.yaml"
   --version $ArgoCdChartVersion `
   -f $ValuesFile `
   --wait `
-  --timeout 20m
+  --timeout 5m
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Helm failed to install Argo CD." -ForegroundColor Red

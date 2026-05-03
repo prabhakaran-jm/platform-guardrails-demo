@@ -30,29 +30,30 @@ The demo scripts provide easy commands for your talk.
 
 ### macOS / Linux (Bash)
 
-1. Fork this repository (GitHub/GitLab) where Argo CD can reach it publicly and push your commits.
-2. `export DEMO_GITOPS_REPO_URL=https://github.com/your-handle/platform-guardrails-demo` _(optional — defaults to inferred `origin` HTTPS URL)_.
-3. Setup: `./demo.sh setup`
-4. Test bad manual apply: `./demo.sh k8s-bad`
-5. Test good manifest directory: `./demo.sh k8s-good`
-6. Test GitOps unhealthy path (requires reachable Git fork): `./demo.sh gitops-bad`
-7. Test GitOps healthy path: `./demo.sh gitops-good`
-8. Test bad IaC: `./demo.sh iac-bad`
-9. Test good IaC: `./demo.sh iac-good`
-10. Lint AWS-shaped IaC fixtures: `./demo.sh iac-fixtures`
-11. Cleanup: `./demo.sh reset`
+1. Setup: `./demo.sh setup`
+2. IaC fixtures (AWS-shaped plan JSON, no terraform init needed): `./demo.sh iac-fixtures`
+3. Bad IaC (terraform plan + Conftest): `./demo.sh iac-bad`
+4. Good IaC: `./demo.sh iac-good`
+5. Bad K8s workload (Kyverno blocks at admission): `./demo.sh k8s-bad`
+6. Good K8s workload: `./demo.sh k8s-good`
+7. _Optional_ GitOps unhealthy path (requires public fork): `./demo.sh gitops-bad`
+8. _Optional_ GitOps healthy path: `./demo.sh gitops-good`
+9. Cleanup: `./demo.sh reset`
+
+> **Recording flow tip:** for a 15‑minute pre-recorded talk, keep `iac-fixtures` + `k8s-bad` + `k8s-good` on camera. They are deterministic, need no remote network, and produce one-screen output. Run GitOps off-camera or replace it with a slide.
+
+For GitOps, fork this repo on GitHub and push your commits, then either `export DEMO_GITOPS_REPO_URL=https://github.com/your-handle/platform-guardrails-demo` or rely on the inferred `origin` HTTPS URL. The `gitops-*` commands now precheck reachability with `git ls-remote` and abort early with a clear error if the fork can't be reached.
 
 ### Windows (PowerShell — No WSL required)
 
 Same flow as Bash, swapping commands for `.\demo.ps1`:
 
-1. Optionally `setx DEMO_GITOPS_REPO_URL https://github.com/your-handle/platform-guardrails-demo` (restart shell) — or rely on HTTPS `git remote get-url origin`.
-2. Setup: `.\demo.ps1 setup`
-3. `.\demo.ps1 k8s-bad` / `.\demo.ps1 k8s-good`
-4. `.\demo.ps1 gitops-bad` / `.\demo.ps1 gitops-good`
-5. IaC demos: `.\demo.ps1 iac-bad` / `iac-good`
-6. `.\demo.ps1 iac-fixtures`
-7. `.\demo.ps1 reset`
+1. Setup: `.\demo.ps1 setup`
+2. `.\demo.ps1 iac-fixtures`
+3. `.\demo.ps1 iac-bad` / `.\demo.ps1 iac-good`
+4. `.\demo.ps1 k8s-bad` / `.\demo.ps1 k8s-good`
+5. _Optional_: `.\demo.ps1 gitops-bad` / `.\demo.ps1 gitops-good` (requires public fork; precheck will tell you if it isn't reachable)
+6. `.\demo.ps1 reset`
 
 After setup, bootstrap Argo credentials any time via:
 

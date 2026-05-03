@@ -10,6 +10,11 @@ if [ "$SCENARIO" == "bad" ]; then
     echo "IaC Guardrail Demo: Bad Infrastructure"
     echo "========================================"
     echo "Expected result: The Terraform plan should be blocked by Conftest."
+    echo "  Expected denials:"
+    echo "    - public access is not allowed"
+    echo "    - encryption must be enabled"
+    echo "    - owner tag is required"
+    echo "    - environment tag is required"
     echo ""
 
     cd terraform/bad

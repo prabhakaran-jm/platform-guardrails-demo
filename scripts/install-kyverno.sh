@@ -8,7 +8,7 @@ helm repo update
 
 # Pinning version for reliable demo runs.
 # Helm's default ~5m wait often fails Kyverno post-upgrade hooks on kind/Podman or smaller machines.
-echo "Installing Kyverno release via Helm (--wait --timeout 20m; hooks need admission pods ready)..."
+echo "Installing Kyverno release via Helm (--wait --timeout 5m)..."
 HELM_EXTRA=()
 if [[ "${INSTALL_KYVERNO_NO_HOOKS:-}" == "1" ]]; then
   echo "WARNING: INSTALL_KYVERNO_NO_HOOKS=1 — Helm will skip lifecycle hooks (use only when hook/cleanup images cannot be pulled)."
@@ -19,7 +19,7 @@ helm upgrade --install kyverno kyverno/kyverno \
   --version 3.1.4 \
   --set admissionController.replicas=1 \
   --wait \
-  --timeout 20m \
+  --timeout 5m \
   "${HELM_EXTRA[@]}"
 
 echo "Waiting for Kyverno webhook to be fully ready..."
@@ -28,7 +28,10 @@ kubectl rollout status deployment/kyverno-admission-controller -n kyverno --time
 echo "Applying Kubernetes Guardrail Policies..."
 kubectl apply -f policies/kyverno/
 
-echo "Waiting 5 seconds for webhooks to register policies globally..."
-sleep 5
+echo "Waiting for ClusterPolicies to report Ready..."
+for policy in disallow-privileged-containers require-resource-limits require-owner-label; do
+  kubectl wait --for=condition=Ready clusterpolicy/${policy} --timeout=60s || true
+done
+sleep 3
 
 echo "Kyverno installation and policy application complete."

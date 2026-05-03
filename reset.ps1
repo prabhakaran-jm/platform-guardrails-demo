@@ -26,6 +26,9 @@ else {
     Write-Host "Cluster already deleted." -ForegroundColor Yellow
 }
 
+# Drop the stale kubeconfig context so reruns start clean.
+& kubectl config delete-context "kind-$ClusterName" *>$null
+
 Write-Host "Cleaning Terraform files..." -ForegroundColor Cyan
 
 $tfDirs = Get-ChildItem -Path "terraform" -Filter ".terraform" -Recurse -Directory -ErrorAction SilentlyContinue
