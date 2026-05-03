@@ -30,7 +30,7 @@ elif [ "$SCENARIO" == "good" ]; then
     echo "Expected result: This deployment passes policies and applies successfully."
     echo ""
     
-    kubectl apply -f k8s/good/deployment.yaml
+    kubectl apply -f k8s/good/
     EXIT_CODE=$?
     
     echo ""

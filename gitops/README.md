@@ -1,17 +1,20 @@
-# GitOps and Platform Guardrails
+# GitOps and platform guardrails
 
-GitOps is a powerful pattern for reconciling desired state into a cluster. However, **GitOps is not a substitute for admission control**. 
+GitOps controllers reconcile Git into the cluster—but **they are not a substitute for admission control**.
 
-In this folder, we include identical workloads mapped as GitOps application manifests. We do not require Argo CD to run the demo, but this section explains how the two concepts integrate.
+## Why Kyverno still wins
 
-### Why Admission Control Matters in GitOps
-If a developer creates a Pull Request updating a workload in Git with an unsafe configuration (like a privileged container), and the CI checks miss it, Argo CD will try to sync that bad workload.
+When an unsafe workload lands in Git and makes it past CI gaps, GitOps happily tries to apply it.
 
-Because our Kyverno policies are running inside the Kubernetes cluster as admission webhooks, Argo CD's sync will fail. The platform guardrail catches the failure at the boundary. The desired state is blocked, and the cluster remains secure.
+Our Kyverno policies attach to the Kubernetes API as validating admission webhooks, so controllers like **Argo CD** fail the sync—the cluster boundary blocks the Pods even though automation attempted the rollout.
 
-### Optional Exploration
-To see how these files structure:
-* `apps/bad-app.yaml` maps to the bad workload.
-* `apps/good-app.yaml` maps to the good workload.
+This repository automates both roles:
 
-These files mirror the structure you would manage in an enterprise GitOps workflow.
+| Layer | Responsibility |
+| --- | --- |
+| Argo CD | Pulls manifests from Git and pushes them toward the desired state inside the cluster. |
+| Kyverno | Validates *every* AdmissionReview (kubectl, controllers, Helm post-render, etc.). |
+
+The flow is scripted end-to-end: `./demo.sh setup` installs Kyverno **and** Argo CD, then `./demo.sh gitops-{good,bad}` render real `Applications` that point at [`k8s/good/`](../k8s/good) and [`k8s/bad/`](../k8s/bad). Argo clones your repository, so **`DEMO_GITOPS_REPO_URL` must resolve to HTTPS Git remotes Argo CD can reach**—fork this repo publicly or expose your fork to the tooling.
+
+Rendered manifests live beside their templates inside [`gitops/argocd-applications`](argocd-applications). Use `./scripts/render-gitops-applications.sh` manually if you prefer to inspect the YAML before handing it off to kubectl.

@@ -20,6 +20,18 @@ spec:
       containers:
         - name: nginx
           image: nginx:alpine
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 2
           # PASS: Non-privileged and explicitly requested limits
           securityContext:
             privileged: false

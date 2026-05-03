@@ -1,4 +1,4 @@
-.PHONY: setup k8s-bad k8s-good iac-bad iac-good reset
+.PHONY: setup k8s-bad k8s-good iac-bad iac-good iac-fixtures gitops-bad gitops-good reset
 
 setup:
 	@./demo.sh setup
@@ -14,6 +14,15 @@ iac-bad:
 
 iac-good:
 	@./demo.sh iac-good
+
+iac-fixtures:
+	@./demo.sh iac-fixtures
+
+gitops-good:
+	@./demo.sh gitops-good
+
+gitops-bad:
+	@./demo.sh gitops-bad
 
 reset:
 	@./demo.sh reset

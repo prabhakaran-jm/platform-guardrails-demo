@@ -24,6 +24,14 @@ Terraform provider download fails
 Symptom: terraform init fails.
 Fix: Ensure you have outbound internet connectivity. If you're on a corporate VPN, it may be blocking access to HashiCorp's registry.
 
+Argo CD Helm fails: Kyverno blocked argocd-redis-secret-init Job
+Symptom: `validate.kyverno.svc-fail` denies Job in namespace `argocd` for owner label / resource limits.
+Fix: Policies exclude platform namespaces (`argocd`, `kyverno`, `kube-system`). Run `kubectl apply -f policies/kyverno/`, then `helm uninstall argocd -n argocd` (if stuck) and `./scripts/install-argocd.sh`.
+
+Helm timed out installing Kyverno (post-upgrade hooks)
+Symptom: `UPGRADE FAILED: post-upgrade hooks failed: timed out waiting for the condition` after `Installing Kyverno`.
+Fix: Scripts now use Helm `--timeout 20m`; if it still fails, give Docker/Podman more RAM/CPU, run `kubectl get pods -n kyverno`, `kubectl describe pod -n kyverno …`, `kubectl logs -n kyverno -l app.kubernetes.io/component=admission-controller`, and retry `./scripts/install-kyverno.sh`.
+
 Conftest is missing
 Symptom: ERROR: conftest is not installed or not in PATH.
 Fix: Follow the official Conftest installation instructions: https://www.conftest.dev/install/

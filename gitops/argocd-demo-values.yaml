@@ -1,0 +1,4 @@
+# Values override for kind/local demos — see README Known Assumptions for chart pin.
+configs:
+  params:
+    server.insecure: "true"

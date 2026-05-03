@@ -1,0 +1,41 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.5.0",
+  "planned_values": {
+    "root_module": {}
+  },
+  "resource_changes": [
+    {
+      "address": "aws_s3_bucket.demo",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "demo",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["create"],
+        "before": null,
+        "after": {
+          "bucket": "demo-bucket-good",
+          "acl": "private",
+          "tags": {
+            "owner": "platform-team",
+            "environment": "production"
+          },
+          "server_side_encryption_configuration": {
+            "rule": [
+              {
+                "bucket_key_enabled": null,
+                "apply_server_side_encryption_by_default": [
+                  {
+                    "kms_master_key_id": null,
+                    "sse_algorithm": "AES256"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

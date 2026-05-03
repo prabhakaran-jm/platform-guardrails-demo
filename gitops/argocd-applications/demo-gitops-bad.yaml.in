@@ -1,0 +1,19 @@
+# Render with scripts/render-gitops-applications.sh (repo URL + revision tokens).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: demo-gitops-bad
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: "__DEMO_REPO_URL__"
+    targetRevision: "__DEMO_REVISION__"
+    path: k8s/bad
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false

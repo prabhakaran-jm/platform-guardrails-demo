@@ -3,7 +3,7 @@ set -e
 
 echo "Checking Prerequisites..."
 
-TOOLS=("docker" "kind" "kubectl" "helm" "terraform" "conftest")
+TOOLS=("docker" "kind" "kubectl" "helm" "terraform" "conftest" "git")
 
 for tool in "${TOOLS[@]}"; do
     if ! command -v $tool &> /dev/null; then

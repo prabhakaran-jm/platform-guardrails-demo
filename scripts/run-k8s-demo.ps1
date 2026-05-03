@@ -75,7 +75,7 @@ if ($Scenario -eq "good") {
     Write-Host "Expected result: This deployment passes policies and applies successfully." -ForegroundColor Yellow
     Write-Host ""
 
-    $result = Invoke-KubectlApply -ManifestPath "k8s/good/deployment.yaml"
+    $result = Invoke-KubectlApply -ManifestPath "k8s/good"
 
     Write-Host $result.Output
     Write-Host ""

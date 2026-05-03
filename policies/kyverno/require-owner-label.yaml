@@ -11,6 +11,13 @@ spec:
   background: false
   rules:
     - name: validate-owner-label
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - kyverno
+                - argocd
       match:
         any:
         - resources:

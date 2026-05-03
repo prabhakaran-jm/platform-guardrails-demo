@@ -1,6 +1,6 @@
 ﻿param (
     [Parameter(Mandatory=$true)]
-    [ValidateSet("setup", "k8s-bad", "k8s-good", "iac-bad", "iac-good", "reset")]
+    [ValidateSet("setup", "k8s-bad", "k8s-good", "iac-bad", "iac-good", "iac-fixtures", "gitops-bad", "gitops-good", "reset")]
     [string]$Command
 )
 
@@ -33,6 +33,21 @@ switch ($Command) {
 
     "iac-good" {
         & .\scripts\run-iac-demo.ps1 good
+        exit $LASTEXITCODE
+    }
+
+    "iac-fixtures" {
+        & .\scripts\run-iac-fixtures.ps1
+        exit $LASTEXITCODE
+    }
+
+    "gitops-good" {
+        & .\scripts\run-gitops-demo.ps1 good
+        exit $LASTEXITCODE
+    }
+
+    "gitops-bad" {
+        & .\scripts\run-gitops-demo.ps1 bad
         exit $LASTEXITCODE
     }
 

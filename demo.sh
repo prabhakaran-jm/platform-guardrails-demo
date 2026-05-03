@@ -9,6 +9,7 @@ case "$COMMAND" in
     ./scripts/check-prereqs.sh
     ./scripts/setup-kind.sh
     ./scripts/install-kyverno.sh
+    ./scripts/install-argocd.sh
     echo "Setup complete."
     ;;
   k8s-bad)
@@ -23,11 +24,20 @@ case "$COMMAND" in
   iac-good)
     ./scripts/run-iac-demo.sh good
     ;;
+  iac-fixtures)
+    ./scripts/run-iac-fixtures.sh
+    ;;
+  gitops-good)
+    ./scripts/run-gitops-demo.sh good
+    ;;
+  gitops-bad)
+    ./scripts/run-gitops-demo.sh bad
+    ;;
   reset)
     ./reset.sh
     ;;
   *)
-    echo "Usage: $0 {setup|k8s-bad|k8s-good|iac-bad|iac-good|reset}"
+    echo "Usage: $0 {setup|k8s-bad|k8s-good|iac-bad|iac-good|iac-fixtures|gitops-bad|gitops-good|reset}"
     exit 1
     ;;
 esac

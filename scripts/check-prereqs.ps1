@@ -1,6 +1,6 @@
 Write-Host "Checking Prerequisites..." -ForegroundColor Cyan
 
-$tools = @("docker", "kind", "kubectl", "helm", "terraform", "conftest")
+$tools = @("docker", "kind", "kubectl", "helm", "terraform", "conftest", "git")
 
 foreach ($tool in $tools) {
     if (-not (Get-Command $tool -ErrorAction SilentlyContinue)) {
