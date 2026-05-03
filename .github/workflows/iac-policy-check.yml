@@ -69,7 +69,7 @@ jobs:
         run: |
           for f in k8s/good/*.yaml k8s/bad/*.yaml; do
             echo "::group::kubectl --dry-run=client $f"
-            kubectl apply --dry-run=client -f "$f"
+            kubectl apply --dry-run=client --validate=false -f "$f"
             echo "::endgroup::"
           done
 

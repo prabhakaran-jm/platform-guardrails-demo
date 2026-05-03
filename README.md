@@ -1,9 +1,49 @@
+<div align="center">
+
 # Platform Guardrails Demo
+
+**Designing Platform Guardrails Using Kubernetes and Infrastructure as Code**
+_PlatformCon cross-platform demo_
+
+[![IaC Policy Check](https://github.com/prabhakaran-jm/platform-guardrails-demo/actions/workflows/iac-policy-check.yml/badge.svg)](https://github.com/prabhakaran-jm/platform-guardrails-demo/actions/workflows/iac-policy-check.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/prabhakaran-jm/platform-guardrails-demo/pulls)
+[![Platform: Linux | macOS | Windows](https://img.shields.io/badge/platform-Linux%20%7C%20macOS%20%7C%20Windows-blue)](#setup--demo-flow)
+
+### Tech Stack
+
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?logo=kubernetes&logoColor=white)](https://kubernetes.io)
+[![kind](https://img.shields.io/badge/kind-v1.29.2-2496ED?logo=docker&logoColor=white)](https://kind.sigs.k8s.io)
+[![Helm](https://img.shields.io/badge/Helm-0F1689?logo=helm&logoColor=white)](https://helm.sh)
+[![Kyverno](https://img.shields.io/badge/Kyverno-3.1.4-FF6B6B?logo=kubernetes&logoColor=white)](https://kyverno.io)
+[![Argo CD](https://img.shields.io/badge/Argo%20CD-9.5.11-EF7B4D?logo=argo&logoColor=white)](https://argo-cd.readthedocs.io)
+[![Terraform](https://img.shields.io/badge/Terraform-7B42BC?logo=terraform&logoColor=white)](https://www.terraform.io)
+[![OPA](https://img.shields.io/badge/OPA-Conftest%20%E2%89%A50.68-7D4698?logo=openpolicyagent&logoColor=white)](https://www.openpolicyagent.org)
+[![Rego](https://img.shields.io/badge/Rego-v1-7D4698)](https://www.openpolicyagent.org/docs/latest/policy-language/)
+[![Bash](https://img.shields.io/badge/Bash-4EAA25?logo=gnubash&logoColor=white)](demo.sh)
+[![PowerShell](https://img.shields.io/badge/PowerShell-5391FE?logo=powershell&logoColor=white)](demo.ps1)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)](https://www.docker.com)
+[![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF?logo=githubactions&logoColor=white)](.github/workflows/iac-policy-check.yml)
+
+</div>
+
+---
 
 This repository contains a cross-platform demo for the PlatformCon talk:
 **"Designing Platform Guardrails Using Kubernetes and Infrastructure as Code"**
 
 This demo illustrates a crucial platform engineering concept: **Guardrails are not approval gates.** Instead of forcing developers to wait for human reviews or ticket approvals, guardrails provide fast, automated feedback that enforces boundaries while developers maintain autonomy.
+
+## Table of Contents
+
+- [Architecture & How It Works](#architecture--how-it-works)
+- [Prerequisites](#prerequisites)
+- [Setup & Demo Flow](#setup--demo-flow)
+  - [macOS / Linux (Bash)](#macos--linux-bash)
+  - [Windows (PowerShell — No WSL required)](#windows-powershell--no-wsl-required)
+- [Known Assumptions](#known-assumptions)
+- [Common Failure Points](#common-failure-points)
+- [License](#license)
 
 ## Architecture & How It Works
 
@@ -89,3 +129,7 @@ On some Linux workstations, **`argocd-repo-server`** can crash with `failed to c
 - **Argo repo URL missing:** `./demo.sh gitops-*` now fails fast—set `DEMO_GITOPS_REPO_URL`.
 - **`gitops-good` timeouts:** Fork must include the manifests on `DEMO_GITOPS_REVISION`; Argo cannot sync private repos without PAT/SSH credential setup.
 - **Argo repo-server crash loop:** Logs often cite **fsnotify** / **too many open files**; raise host **inotify** limits (linked troubleshooting doc).
+
+## License
+
+[MIT](LICENSE) © Prabhakaran Jayaraman Masani
