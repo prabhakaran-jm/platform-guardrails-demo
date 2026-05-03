@@ -9,8 +9,8 @@ package main
 # Where it runs:
 # - locally or in CI using Conftest against Terraform plan JSON
 #
-# Demo narration:
-# "This policy checks the plan before anything is applied."
+# Rego dialect: expects Conftest aligned with Rego v1 (e.g. >= 0.50).
+# `.github/workflows/iac-policy-check.yml` installs a matching release.
 
 is_missing(value) if {
     value == null
