@@ -5,12 +5,20 @@ helm repo update | Out-Null
 
 Write-Host "Installing Kyverno release via Helm (--wait --timeout 20m). This can take several minutes on kind/Podman." -ForegroundColor DarkGray
 
-helm upgrade --install kyverno kyverno/kyverno `
-  -n kyverno --create-namespace `
-  --version 3.1.4 `
-  --set admissionController.replicas=1 `
-  --wait `
-  --timeout 20m
+$helmArgs = @(
+    "upgrade", "--install", "kyverno", "kyverno/kyverno",
+    "-n", "kyverno", "--create-namespace",
+    "--version", "3.1.4",
+    "--set", "admissionController.replicas=1",
+    "--wait",
+    "--timeout", "20m"
+)
+if ($env:INSTALL_KYVERNO_NO_HOOKS -eq "1") {
+    Write-Host "WARNING: INSTALL_KYVERNO_NO_HOOKS=1 — skipping Helm hooks." -ForegroundColor Yellow
+    $helmArgs += "--no-hooks"
+}
+
+& helm @helmArgs
 
 if ($LASTEXITCODE -ne 0) { exit 1 }
 

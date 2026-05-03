@@ -10,8 +10,8 @@ jobs:
   validate-iac:
     runs-on: ubuntu-latest
     env:
-      # Conftest 0.46 bundled too old an OPA for `deny contains msg if`; keep in sync with local installs.
-      CONFTEST_VERSION: "0.55.0"
+      # OPA 1.x parses Rego v1 (`deny contains msg if`). Align with a current Conftest release.
+      CONFTEST_VERSION: "0.68.2"
     steps:
       - name: Check out repository
         uses: actions/checkout@v4

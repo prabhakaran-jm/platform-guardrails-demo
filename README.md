@@ -20,7 +20,7 @@ See [`gitops/README.md`](gitops/README.md) for the narration between Argo sync o
 - kubectl
 - helm
 - terraform
-- conftest
+- conftest **≥ 0.68** (bundles OPA 1.x; matches [`iac-policy-check`](.github/workflows/iac-policy-check.yml) and `iac-policies/terraform.rego` Rego v1 syntax)
 - git (for GitOps demos and optional HTTPS `origin` inference)
 - make (optional, for Linux/macOS users)
 
@@ -78,6 +78,8 @@ Commit your changes (`k8s/*`, manifests, README updates) **before running `gitop
 
 Kyverno + Argo CD + sample workloads comfortably fit in a workstation with Docker allocated **≥6 GB RAM** (4 GB is often workable but slows webhook warm-up Helm hooks).
 
+On some Linux workstations, **`argocd-repo-server`** can crash with `failed to create fsnotify Watcher: too many open files` until you raise **`fs.inotify.max_user_watches`** / **`max_user_instances`** on the Docker/Podman host—see [`docs/troubleshooting.md`](docs/troubleshooting.md).
+
 ## Common Failure Points
 
 - **Docker not running:** Ensure Docker Desktop / daemon is started before running `setup`.
@@ -85,3 +87,4 @@ Kyverno + Argo CD + sample workloads comfortably fit in a workstation with Docke
 - **Execution Policies (Windows):** Run `Set-ExecutionPolicy RemoteSigned -Scope Process` before scripts if PowerShell refuses them.
 - **Argo repo URL missing:** `./demo.sh gitops-*` now fails fast—set `DEMO_GITOPS_REPO_URL`.
 - **`gitops-good` timeouts:** Fork must include the manifests on `DEMO_GITOPS_REVISION`; Argo cannot sync private repos without PAT/SSH credential setup.
+- **Argo repo-server crash loop:** Logs often cite **fsnotify** / **too many open files**; raise host **inotify** limits (linked troubleshooting doc).
